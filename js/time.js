@@ -1,29 +1,115 @@
-function copyUnixTime() {
-    var unixTimeInput = document.getElementById('unixTime2');
+document.addEventListener("DOMContentLoaded", function() {
+    function populateSelectors() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        const currentDay = currentDate.getDate();
+        const currentHour = currentDate.getHours();
+        const currentMinute = currentDate.getMinutes();
+        const currentSecond = currentDate.getSeconds();
 
-    // Select the text in the input element
-    unixTimeInput.select();
-    unixTimeInput.setSelectionRange(0, 99999); /* For mobile devices */
+        const yearSelect = document.getElementById("year");
+        const monthSelect = document.getElementById("month");
+        const daySelect = document.getElementById("day");
+        const hourSelect = document.getElementById("hour");
+        const minuteSelect = document.getElementById("minute");
+        const secondSelect = document.getElementById("second");
 
-    // Copy the selected text
-    document.execCommand('copy');
+        for (let i = currentYear - 50; i <= currentYear + 50; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
 
-    // Deselect the input element
-    unixTimeInput.setSelectionRange(0, 0);
-}
+        for (let i = 1; i <= 12; i++) {
+            const option = document.createElement("option");
+            option.value = i - 1; // měsíc je v JavaScriptu 0-indexovaný
+            option.textContent = i;
+            monthSelect.appendChild(option);
+        }
 
-    // Function to update the UNIX time every second
-    setInterval(function() {
-    document.getElementById('unixTime2').value = Math.floor(Date.now());
-}, 1000);
+        for (let i = 0; i < 24; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = ("0" + i).slice(-2);
+            hourSelect.appendChild(option);
+        }
 
+        for (let i = 0; i < 60; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = ("0" + i).slice(-2);
+            minuteSelect.appendChild(option);
+            secondSelect.appendChild(option.cloneNode(true)); // Sekundy kopírujeme
+        }
 
-    function convertToUTC() {
+        yearSelect.value = currentYear;
+        monthSelect.value = currentMonth;
+        updateDays(currentYear, currentMonth);
+        daySelect.value = currentDay;
+        hourSelect.value = 0;
+        minuteSelect.value = 0;
+        secondSelect.value = 0;
+    }
+
+    function updateDays(year, month) {
+        const daySelect = document.getElementById("day");
+
+        const daysInMonth = new Date(year, month, 0).getDate();
+
+        daySelect.innerHTML = "";
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = i;
+            daySelect.appendChild(option);
+        }
+    }
+
+    window.generateMilliseconds = function() {
+        const year = parseInt(document.getElementById("year").value);
+        const month = parseInt(document.getElementById("month").value);
+        const day = parseInt(document.getElementById("day").value);
+        const hour = parseInt(document.getElementById("hour").value);
+        const minute = parseInt(document.getElementById("minute").value);
+        const second = parseInt(document.getElementById("second").value);
+
+        const selectedDate = new Date(year, month, day, hour, minute, second);
+        const milliseconds = selectedDate.getTime();
+
+        document.getElementById("generatedMilliseconds").textContent = `Milliseconds: ${milliseconds}`;
+    }
+
+    window.copyGeneratedMilliseconds = function() {
+        const milliseconds = document.getElementById("generatedMilliseconds").textContent.split(": ")[1];
+        navigator.clipboard.writeText(milliseconds).then(() => {
+            console.log("Milliseconds copied to clipboard");
+        });
+    }
+
+    populateSelectors();
+
+    document.getElementById("year").addEventListener("change", () => {
+        const year = parseInt(document.getElementById("year").value);
+        const month = parseInt(document.getElementById("month").value);
+        updateDays(year, month);
+    });
+
+    document.getElementById("month").addEventListener("change", () => {
+        const year = parseInt(document.getElementById("year").value);
+        const month = parseInt(document.getElementById("month").value);
+        updateDays(year, month);
+    });
+});
+
+function convertToUTC() {
     var milisekundy = parseInt(document.getElementById('unixTime').value);
     var datum = new Date(milisekundy);
 
-    var den = ("0" + datum.getDate()).slice(-2); // Přidáváme nulu dopředu pro jednociferná čísla
-    var mesic = ("0" + (datum.getMonth() + 1)).slice(-2); // Přidáváme nulu dopředu pro jednociferná čísla
+    var den = ("0" + datum.getDate()).slice(-2);
+    var mesic = ("0" + (datum.getMonth() + 1)).slice(-2);
     var rok = datum.getFullYear();
     var hodina = ("0" + datum.getHours()).slice(-2);
     var minuta = ("0" + datum.getMinutes()).slice(-2);
@@ -32,22 +118,43 @@ function copyUnixTime() {
     var formatovanyDatum = den + '.' + mesic + '.' + rok + ' ' + hodina + ':' + minuta + ':' + sekunda;
     document.getElementById('convertedUTCTime').textContent = formatovanyDatum;
 }
+
+function copyUnixTime() {
+    var unixTimeInput = document.getElementById('unixTime2');
+
+    unixTimeInput.select();
+    unixTimeInput.setSelectionRange(0, 99999); /* For mobile devices */
+
+    document.execCommand('copy');
+
+    unixTimeInput.setSelectionRange(0, 0);
+}
+
+window.onload = function() {
+    setInterval(function() {
+        const unixInput = document.getElementById('unixTime2');
+        if (unixInput) {
+            unixInput.value = Math.floor(Date.now());
+        } else {
+            console.error("Element with ID 'unixTime2' not found.");
+        }
+    }, 1000);
+};
+
+
+
     function copyconvertToUTC() {
     var convertedUTCTime = document.getElementById('convertedUTCTime').textContent;
 
-    // Vytvoření dočasného vstupního elementu typu text
     var tempInput = document.createElement("input");
     tempInput.value = convertedUTCTime;
     document.body.appendChild(tempInput);
 
-    // Výběr textu v dočasném vstupním elementu
     tempInput.select();
     tempInput.setSelectionRange(0, 99999); /* Pro mobilní zařízení */
 
-    // Kopírování vybraného textu
     document.execCommand('copy');
 
-    // Odstranění dočasného vstupního elementu
     document.body.removeChild(tempInput);
 }
 
@@ -55,7 +162,6 @@ function copyUnixTime() {
     var localDateString = document.getElementById('localDate').value.trim();
     var localDateParts;
 
-    // Použití regulárního výrazu pro rozdělení data podle jednotlivých částí
     var regex = /(\d{2}).(\d{2}).(\d{4})(?:\s?@?\s?(\d{2}):(\d{2}):(\d{2})\.?(\d{3})?)?/;
     var match = localDateString.match(regex);
 
@@ -68,13 +174,11 @@ function copyUnixTime() {
     var seconds = match[6] ? parseInt(match[6]) : 0;
     var milliseconds = match[7] ? parseInt(match[7]) : 0;
 
-    // Vytvoření nového objektu Date s použitím zadaného data
     var localDate = new Date(year, month, day, hours, minutes, seconds, milliseconds);
 
-    // Získání počtu milisekund z nově vytvořeného objektu Date
     var resultMilliseconds = localDate.getTime();
 
-    document.getElementById('convertedLocalTime').textContent = "Converted time in milliseconds: " + resultMilliseconds;
+    document.getElementById('convertedLocalTime').textContent = resultMilliseconds;
 } else {
     console.error("Neznámý formát data");
 }
@@ -83,19 +187,15 @@ function copyUnixTime() {
     function copyconvertToLocalTime() {
     var convertedUTCTime = document.getElementById('convertedLocalTime').textContent;
 
-    // Vytvoření dočasného vstupního elementu typu text
     var tempInput = document.createElement("input");
     tempInput.value = convertedUTCTime;
     document.body.appendChild(tempInput);
 
-    // Výběr textu v dočasném vstupním elementu
     tempInput.select();
     tempInput.setSelectionRange(0, 99999); /* Pro mobilní zařízení */
 
-    // Kopírování vybraného textu
     document.execCommand('copy');
 
-    // Odstranění dočasného vstupního elementu
     document.body.removeChild(tempInput);
 }
 
@@ -114,16 +214,14 @@ function copyUnixTime() {
     return;
 }
     var day = parseInt(dateParts[0]);
-    var month = parseInt(dateParts[1]) - 1; // Months are zero-indexed
+    var month = parseInt(dateParts[1]) - 1; // měsíce začínají od 0
     var year = parseInt(dateParts[2]);
     var hours = parseInt(timeParts[0]);
     var minutes = parseInt(timeParts[1]);
     var seconds = parseInt(timeParts[2]);
 
-    // Create a Date object using the local time components
     var localDate = new Date(year, month, day, hours, minutes, seconds);
 
-    // Convert local date to UNIX time in seconds
     var unixTimeInSeconds = Math.floor(localDate.getTime() / 1000);
 
     var formattedDateTime1 = getFormattedDateTime(unixTimeInSeconds);
@@ -135,37 +233,29 @@ function copyUnixTime() {
     function copyconvertToUnixTime() {
     var convertedUTCTime = document.getElementById('convertedUnixTime').textContent;
 
-    // Vytvoření dočasného vstupního elementu typu text
     var tempInput = document.createElement("input");
     tempInput.value = convertedUTCTime;
     document.body.appendChild(tempInput);
 
-    // Výběr textu v dočasném vstupním elementu
     tempInput.select();
     tempInput.setSelectionRange(0, 99999); /* Pro mobilní zařízení */
 
-    // Kopírování vybraného textu
     document.execCommand('copy');
 
-    // Odstranění dočasného vstupního elementu
     document.body.removeChild(tempInput);
 }
     function copyconvertToUnixTime2() {
     var convertedUTCTime = document.getElementById('getFormattedDateTime2').textContent;
 
-    // Vytvoření dočasného vstupního elementu typu text
     var tempInput = document.createElement("input");
     tempInput.value = convertedUTCTime;
     document.body.appendChild(tempInput);
 
-    // Výběr textu v dočasném vstupním elementu
     tempInput.select();
     tempInput.setSelectionRange(0, 99999); /* Pro mobilní zařízení */
 
-    // Kopírování vybraného textu
     document.execCommand('copy');
 
-    // Odstranění dočasného vstupního elementu
     document.body.removeChild(tempInput);
 }
 
@@ -212,18 +302,14 @@ function copyUnixTime() {
     function copyconvertToStrings() {
     var convertedUTCTime = document.getElementById('outputText').textContent;
 
-    // Vytvoření dočasného vstupního elementu typu text
     var tempInput = document.createElement("input");
     tempInput.value = convertedUTCTime;
     document.body.appendChild(tempInput);
 
-    // Výběr textu v dočasném vstupním elementu
     tempInput.select();
     tempInput.setSelectionRange(0, 99999); /* Pro mobilní zařízení */
 
-    // Kopírování vybraného textu
     document.execCommand('copy');
 
-    // Odstranění dočasného vstupního elementu
     document.body.removeChild(tempInput);
 }

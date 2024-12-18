@@ -10,38 +10,61 @@
 <body>
 
 <div class='container'>
-    <label for='unixTime2'>MS UNIX Time (Updated every second):</label>
+
+    <!-- MILISEKUNDY -->
+    <label for='unixTime2'><b>MILISECONDS</b></label>
     <div>
         <input type='text' id='unixTime2' readonly>
         <button onclick='copyUnixTime()'>Copy</button>
     </div>
     <br>
+    <label>====================================================</label>
+    <!-- VÝBĚR DATUMU-->
+    <div id="datetimePicker">
+        Year: <select id="year"></select>
+        Month: <select id="month"></select>
+        Day: <select id="day"></select>
+        H: <select id="hour"></select>
+        M: <select id="minute"></select>
+        S: <select id="second"></select>
+    </div>
+    <p id="generatedMilliseconds"></p>
+    <button onclick="generateMilliseconds()">Vygenerovat Milisekundy</button>
+    <button onclick="copyGeneratedMilliseconds()">Kopírovat</button><br><br>
 
-    <label for='unixTime'>MS TO DATE = UNIX + konvert do kibany</label>
+    <label>====================================================</label>
+
+    <label for='unixTime'><b>MILISECONDS</b> TO DATE</label>
     <input type='text' id='unixTime' placeholder='Enter UNIX Time...'>
-    <button onclick='convertToUTC()'>Convert to UTC Time</button>
-    <button onclick='copyconvertToUTC()'>Copy</button>
     <p id='convertedUTCTime'></p>
+    <button onclick='convertToUTC()'>Convert to UTC Time</button>
+    <button onclick='copyconvertToUTC()'>Copy</button><br><br>
 
-    <label for='customDateTime'>DATUM TO KIBANA - (DD.MM.YYYY HH:MM:SS):</label>
+    <label>====================================================</label>
+
+    <label for='localDate'><b>DATE</b> TO MILISECONDS | (YYYY/MM/DD) || (DD.MM.YYYY)</label>
+    <input type='text' id='localDate' placeholder='Enter Local Date...'>
+    <p id='convertedLocalTime'></p>
+    <button onclick='convertToLocalTime()'>Convert to UNIX Time</button>
+    <button onclick='copyconvertToLocalTime()'>Copy</button><br><br>
+
+    <label>====================================================</label>
+
+    <label for='customDateTime'><b>DATE</b> TO KIBANA | DD.MM.YYYY HH:MM:SS</label>
     <input type='text' id='customDateTime' placeholder='Enter Date and Time...'>
-    <button onclick='convertToUnixTime()'>Convert to UNIX Time</button>
-    <button onclick='copyconvertToUnixTime()'>CopyFirst</button>
-    <button onclick='copyconvertToUnixTime2()'>CopySecond</button>
     <p id='convertedUnixTime'></p>
     <p id='getFormattedDateTime2'></p>
+    <button onclick='convertToUnixTime()'>Convert to UNIX Time</button>
+    <button onclick='copyconvertToUnixTime()'>CopyFirst</button>
+    <button onclick='copyconvertToUnixTime2()'>CopySecond</button><br><br>
 
-    <label for='localDate'>DATUM TO MS - NORMAL (YYYY/MM/DD) || (DD.MM.YYYY):</label>
-    <input type='text' id='localDate' placeholder='Enter Local Date...'>
-    <button onclick='convertToLocalTime()'>Convert to UNIX Time</button>
-    <button onclick='copyconvertToLocalTime()'>Copy</button>
-    <p id='convertedLocalTime'></p>
+    <label>====================================================</label>
 
     <label for='inputText'>Input:</label>
     <textarea id='inputText' placeholder='Enter strings here...' spellcheck='false'></textarea>
-    <button onclick='convertToStrings()'>Convert</button>
-    <button onclick='copyconvertToStrings()'>Copy</button>
     <label for='outputText'>Output:</label>
+    <button onclick='convertToStrings()'>Convert</button>
+    <button onclick='copyconvertToStrings()'>Copy</button><br><br>
     <textarea id='outputText' readonly spellcheck='false'></textarea>
 </div>
 </body>
